@@ -36,15 +36,13 @@ int main(int argc, char *argv[])
                 printf("Read half data:\n%s\n", buffer);
                 memset(buffer, 0, sizeof(buffer));
 
-                // TODO
-                lseek(fd, 0, SEEK_END);
-                rbytes = read(fd, buffer, hbytes);
-                printf("SEEK_END + 0:\n%s", buffer);
+                lseek(fd, -10, SEEK_END);
+                rbytes = read(fd, buffer, sizeof(buffer));
+                printf("SEEK_END - 10:\n%s", buffer);
 
-                // TODO
-                lseek(fd, -10, SEEK_SET);
-                rbytes = read(fd, buffer, hbytes);
-                printf("SEEK_SET - 10:\n%s", buffer);
+                lseek(fd, 13, SEEK_SET);
+                rbytes = read(fd, buffer, sizeof(buffer));
+                printf("SEEK_SET + 13:\n%s", buffer);
 
                 // Sparse file
                 memset(buffer, 0, sizeof(buffer));
