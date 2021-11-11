@@ -60,13 +60,26 @@ int main(int argc, char *argv[])
     }
     if (fd_source > 0 && fd_target > 0)
     {
-        status = copy_file(fd_source, fd_target);
-        if (!status)
-            printf("Sucessfuly copy file!\n");
-        else
-            printf("Error while copy file!\n");
+        if (dup2(fd_source, 0) == -1)
+        {
+            perror("Error retrasnlate to stdin!");
+            return status;
+        }
+        if (dup2(fd_target, 1) == -1)
+        {
+            perror("Error retrasnlate to stdout!");
+            return status;
+        }
         close(fd_source);
         close(fd_target);
     }
+
+    // TODO
+    status = copy_file(0, 1);
+    if (!status)
+        printf("Sucessfuly copy file!\n");
+    else
+        printf("Error while copy file!\n");
+
     return status;
 }

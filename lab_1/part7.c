@@ -10,15 +10,15 @@
 
 int main(int argc, char *argv[])
 {
-	int ret;
-	struct stat file_stat;
-	char *filename;
+    int ret;
+    struct stat file_stat;
+    char *filename;
 
-	filename = argv[1];
+    filename = argv[1];
 
-	ret = stat(filename, &file_stat);
-	if (ret == 0)
-	{
+    ret = stat(filename, &file_stat);
+    if (ret == 0)
+    {
         printf("File permissions: %o\n", file_stat.st_mode & 0777);
         printf("Number of hard links: %d\n", file_stat.st_nlink);
         printf("File size in bytes: %lld\n", file_stat.st_size);
@@ -28,11 +28,11 @@ int main(int argc, char *argv[])
         printf("Last access time:\t\t\t%s\n", asctime(localtime(&file_stat.st_atime)));
         printf("Last content modfication time:\t\t%s\n", asctime(localtime(&file_stat.st_mtime)));
         printf("Last attributes modfication time:\t%s\n", asctime(localtime(&file_stat.st_ctime)));
-	}
-	else
-	{
+    }
+    else
+    {
         printf("Error get statistics");
         return 1;
-	}
-	return 0;
+    }
+    return 0;
 }
