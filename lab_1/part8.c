@@ -58,6 +58,16 @@ int main(int argc, char *argv[])
         if (fd_target == -1)
             printf("Error while creating target file!\n");
     }
+    else
+    {
+        char buffer[512];
+        int rbytes = read(0, buffer, sizeof(buffer));
+        int wbtytes = write(1, buffer, sizeof(buffer));
+        if (rbytes != wbtytes)
+        {
+            write(2, buffer, sizeof(buffer));
+        }
+    }
     if (fd_source > 0 && fd_target > 0)
     {
         status = copy_file(fd_source, fd_target);

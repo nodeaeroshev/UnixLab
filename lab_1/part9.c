@@ -48,6 +48,7 @@ int copy_file(int fd_source, int fd_target)
 int main(int argc, char *argv[])
 {
     int fd_source = 0, fd_target = 0, status = 1;
+    int stdout = dup(1);
 
     if (argc > 1)
     {
@@ -74,12 +75,18 @@ int main(int argc, char *argv[])
         close(fd_target);
     }
 
-    // TODO
     status = copy_file(0, 1);
+    close(0);
+    close(1);
+
+
+    char msg_succes[] = "Sucessfuly copy file!\n";
+    char msg_error[] = "Error while copy file!\n";
+    
     if (!status)
-        printf("Sucessfuly copy file!\n");
+        write(stdout, msg_succes, sizeof(msg_succes));
     else
-        printf("Error while copy file!\n");
+        write(stdout, msg_error, sizeof(msg_error));
 
     return status;
 }

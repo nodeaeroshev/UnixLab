@@ -27,6 +27,11 @@ int main(int argc, char *argv[])
             if (fd != -1)
             {
                 rbytes = read(fd, buffer, wbytes);
+                if (rbytes != wbytes)
+                {
+                    printf("Error!");
+                    return 1;
+                }
                 printf("Readed:\n%s", buffer);
                 memset(buffer, 0, sizeof(buffer));
 
