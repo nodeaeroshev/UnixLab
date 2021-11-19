@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-// TODO
+
 int main()
 {
     pid_t pid;
@@ -17,18 +17,18 @@ int main()
     {
         case -1:
             perror("Fork failed");
-            return 1;
+            exit(1);
         case 0:
             printf("%s", info);
             printf("CHILD:\t%d\t%d\t%d\n\n", getpid(), getppid(), getpgid(getpid()));
             sleep(3);
             printf("Child process finished\n");
-            return 0;
+            exit(0);
         default:
             printf("%s", info);
             printf("PARENT:\t%d\t%d\t%d\n\n", getpid(), getppid(), getpgid(getpid()));
-            sleep(6);
+            sleep(10);
             printf("Parent process finished\n\n");
-            return 0;
+            exit(0);
     }
 }

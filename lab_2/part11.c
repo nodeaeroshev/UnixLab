@@ -4,16 +4,17 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 
-int main()
+int main(int argc, char *argv[])
 {
     pid_t pid;
-
-    printf("Started with pid -> %d\n", getpid());
+    int status;
+    char *cmd = argv[1];
+    argv += 1; // Сдвигаем, чтобы не захватило имя исполняемого файла от C
 
     pid = fork();
-    printf("Forked pid -> %d\n", pid);
 
     switch(pid)
     {
@@ -21,10 +22,12 @@ int main()
             perror("Fork failed!");
             exit(1);
         case 0:
-            printf("Child with pid -> %d\n", getpid());
+            printf("Child process!\n");
+            execvp(cmd, argv);
             exit(0);
         default:
-            printf("Parent with pid -> %d\n", getpid());
+            printf("Parent process!\n");
+            wait(&status);
             exit(0);
     }
 

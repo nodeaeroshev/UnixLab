@@ -9,7 +9,6 @@
 int main()
 {
     pid_t pid, child_pid;
-    int status_code = 0;
     int status;
     char info[] = "\tPID\tPPID\tPGID\n";
 
@@ -19,10 +18,11 @@ int main()
     {
         case -1:
             perror("Fork failed");
-            status_code = 1;
+            exit(1)
         case 0:
             printf("%s", info);
             printf("CHILD:\t%d\t%d\t%d\n\n", getpid(), getppid(), getpgid(getpid()));
+            exit(0);
         default:
             printf("%s", info);
             printf("PARENT:\t%d\t%d\t%d\n\n", getpid(), getppid(), getpgid(getpid()));
@@ -32,7 +32,8 @@ int main()
                 printf("Child exited with code: %d\n", WIFEXITED(status));
             else
                 printf("Child terminated abnormally!\n");
+            exit(0);
     }
 
-    return status_code;
+    return 0;
 }

@@ -10,15 +10,20 @@ int main()
 {
     pid_t pid;
     char info[] = "\tPID\tPPID\tPGID\n";
+    unsigned int spgrp;
 
     pid = fork();
 
     switch(pid)
     {
         case -1:
-            perror("Fork failed");
+            perror("Fork failed!");
             exit(1);
         case 0:
+            printf("%s", info);
+            printf("CHILD:\t%d\t%d\t%d\n\n", getpid(), getppid(), getpgid(getpid()));
+            spgrp = setpgrp();
+            printf("NEW SPGRP!\n");
             printf("%s", info);
             printf("CHILD:\t%d\t%d\t%d\n\n", getpid(), getppid(), getpgid(getpid()));
             pause();
@@ -31,4 +36,6 @@ int main()
             printf("Parent process finished\n\n");
             exit(0);
     }
+
+    return 0;
 }
