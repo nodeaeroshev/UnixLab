@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
         default:
             printf("Parent process!\n");
             wait(&status);
+            // system("ls -lha");
             exit(0);
     }
 

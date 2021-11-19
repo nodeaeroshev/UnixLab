@@ -14,8 +14,9 @@ int main()
     char buffer[512];
     int fd, fd_child, fd_parent, c_rbytes, p_rbytes, status;
 
-    pid = fork();
     fd = open("/Users/artem/UnixLab/lab_2/big_file", O_RDONLY);
+    pid = fork();
+
 
     switch(pid)
     {
@@ -29,7 +30,7 @@ int main()
             c_rbytes = read(fd, buffer, sizeof(buffer));
             write(fd_child, buffer, c_rbytes);
             close(fd_child);
-            printf("Text from child process:\n%s\n\n", buffer);
+            // printf("Text from child process:\n%s\n\n", buffer);
             printf("Child process finished\n");
             exit(0);
         default:
@@ -39,7 +40,7 @@ int main()
             p_rbytes = read(fd, buffer, sizeof(buffer));
             write(fd_parent, buffer, p_rbytes);
             close(fd_parent);
-            printf("Text from parent process:\n%s\n\n", buffer);
+            // printf("Text from parent process:\n%s\n\n", buffer);
             wait(&status);
     }
 

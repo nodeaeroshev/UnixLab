@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     printf("GREETING=%s\n", getenv("GREETING"));
     unsetenv("GREETING");
 
+    printf("Env\n");
     while(*environ != NULL)
     {
         printf("%s\n", *environ);
