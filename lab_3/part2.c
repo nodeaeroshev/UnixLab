@@ -3,23 +3,21 @@
 #include <signal.h>
 #include <unistd.h>
 
-char str[] = "\nsignal SIGINT\n";
-
 
 void sighandler(int sig)
 {
-    write(1, str, sizeof(str));
+    fprintf(stdout, "\nsignal SIGINT\n");
 }
 
 int main()
 {
-    // TODO В чём различие с signal
+    // Sigaction настраивает надёжные сигнала
     struct sigaction handler;
     handler.sa_handler = sighandler;
     sigemptyset(&handler.sa_mask);
     handler.sa_flags = SA_RESTART;
 
-    sigaction(SIGINT, &handler, 0);
+    sigaction(SIGINT, &handler, NULL);
 
     getchar();
 
