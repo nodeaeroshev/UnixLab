@@ -9,6 +9,7 @@
 void signal_handler(int sig)
 {
     fprintf(stdout, "ALARM: %d!\n", sig);
+    pause();
 }
 
 
@@ -24,7 +25,7 @@ int main()
             perror("Fork failed");
             exit(1);
         case 0:
-            // signal(SIGALRM, signal_handler);
+            signal(SIGALRM, signal_handler);
             alarm(2);
             fprintf(stdout, "Child process -> %d\n", getpid());
             for (int i = 0; i < 100000000; i++)
