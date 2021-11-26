@@ -24,12 +24,14 @@ void child_handler(int sig)
 
 int main()
 {
-    struct sigaction act;
-    act.sa_handler = child_handler;
-    sigemptyset(&act.sa_mask);
-    act.sa_flags = SA_NODEFER;
+    // struct sigaction act;
+    // act.sa_handler = child_handler;
+    // sigemptyset(&act.sa_mask);
+    // act.sa_flags = SA_NODEFER;
 
-    sigaction(SIGCHLD, &act, 0);
+    // sigaction(SIGCHLD, &act, 0);
+
+    signal(SIGCHLD, SIG_IGN);
 
     for (int i = 0; i < 10; i++)
     {

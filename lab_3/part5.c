@@ -34,7 +34,9 @@ int main()
             sleep(5);
             kill(pid, SIGUSR1);
             w_pid = wait(&status);
-            fprintf(stdout, "Child process %d finished with status %d - %x\n", pid, status, status);
+            if (WIFSIGNALED(status))
+                fprintf(stdout, "Child process %d finished with status %d\n", pid, WTERMSIG(status));
+
             exit(0);
 
     }

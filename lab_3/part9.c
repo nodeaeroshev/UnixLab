@@ -9,7 +9,7 @@
 void signal_handler(int sig)
 {
     fprintf(stdout, "ALARM: %d!\n", sig);
-    pause();
+    // pause();
 }
 
 
@@ -25,8 +25,8 @@ int main()
             perror("Fork failed");
             exit(1);
         case 0:
-            signal(SIGALRM, signal_handler);
-            alarm(2);
+            // signal(SIGALRM, signal_handler);
+            alarm(5);
             fprintf(stdout, "Child process -> %d\n", getpid());
             for (int i = 0; i < 100000000; i++)
             {
@@ -40,7 +40,10 @@ int main()
         default:
             fprintf(stdout, "Parent process -> %d\n", getpid());
             w_pid = wait(&status);
-            fprintf(stdout, "Child process %d finished with status %d - %x\n", pid, status, status);
+            if (WIFSIGNALED(status))
+                fprintf(stdout, "Child process %d finished with status %d\n", pid, WTERMSIG(status));
+            if (WIFEXITED(status))
+                fprintf(stdout, "Good!\n");
             exit(0);
 
     }

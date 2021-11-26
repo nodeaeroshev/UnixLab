@@ -9,6 +9,7 @@ void sighandler(int sig)
     fprintf(stdout, "\nsignal SIGINT\n");
 }
 
+
 int main()
 {
     // Sigaction настраивает надёжные сигнала

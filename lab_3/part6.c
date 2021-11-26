@@ -32,9 +32,10 @@ int main()
         default:
             fprintf(stdout, "Parent process -> %d\n", getpid());
             sleep(5);
-            kill(pid, SIGKILL);
+            kill(pid, SIGUSR2);
             w_pid = wait(&status);
-            fprintf(stdout, "Child process %d finished with status %d - %x\n", pid, status, status);
+            if (WIFSIGNALED(status))
+                fprintf(stdout, "Child process %d finished with status %d\n", pid, WTERMSIG(status));
             exit(0);
 
     }

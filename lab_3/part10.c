@@ -10,7 +10,7 @@
 
 void handler_ch_sig(int sig)
 {
-    fprintf(stdout, "Signal SIGCHLD\n");
+    fprintf(stdout, "\nSignal SIGCHLD\n");
     sleep(5);
 }
 

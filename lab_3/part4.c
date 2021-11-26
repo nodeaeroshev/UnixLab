@@ -15,7 +15,6 @@ void child_handler(int sig)
 }
 
 
-// TODO
 int main()
 {
     struct sigaction act;
@@ -36,10 +35,10 @@ int main()
             exit(1);
         case 0:
             fprintf(stdout, "Child process -> %d\n", getpid());
-            for (int i = 0; i < 100000000; i++)
+            for (int i = 0; i < 100; i++)
             {
                 fprintf(stdout, "outer loop: i = %d\n", i);
-                for (int j = 0; j < 100000000; j++)
+                for (int j = 0; j < 100; j++)
                 {
                     continue;
                 }
