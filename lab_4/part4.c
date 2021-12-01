@@ -17,8 +17,9 @@ int main()
 {
     pid_t pid;
     int fd_ctp[2];
-    char msg[] = "Hello, world!\n";
     char buf[16];
+    char ptr_fd;
+    int tmp;
 
     int ok_ctp = pipe(fd_ctp);
 
@@ -32,18 +33,12 @@ int main()
                 perror("Fork failed!");
                 exit(1);
             case 0:
-                fprintf(stdout, "CHILD process - %d\n", getpid());
                 close(fd_ctp[READ]);
-
-                for (int i = 0; i < 10; i++)
+                if ((tmp = dup(fd_ctp[WRITE])) != -1)
                 {
-                    write(fd_ctp[WRITE], msg, sizeof(msg));
-                    fprintf(stdout, "%d: Wrote -> %s\n", i, msg);
-                    sleep(1);
+                    ptr_fd = tmp + '0';
+                    execl("/Users/artem/UnixLab/lab_4/part4_co.o", &ptr_fd, NULL);
                 }
-
-                close(fd_ctp[WRITE]);
-                fprintf(stdout, "SHUTDOWN CHILD\n");
                 exit(0);
             default:
                 fprintf(stdout, "PARENT process - %d\n", getpid());

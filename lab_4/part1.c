@@ -13,7 +13,6 @@ enum PipeAction
 };
 
 
-// TODO deadlock
 int main()
 {
     pid_t pid;
@@ -46,6 +45,8 @@ int main()
                 write(fd_ctp[WRITE], answ, sizeof(answ));
                 fprintf(stdout, "Wrote: %s\n", answ);
 
+                close(fd_ptc[READ]);
+                close(fd_ctp[WRITE]);
                 fprintf(stdout, "SHUTDOWN CHILD\n");
                 exit(0);
             default:
@@ -60,6 +61,8 @@ int main()
                 read(fd_ctp[READ], buf, sizeof(buf));
                 fprintf(stdout, "Readed: %s\n", buf);
 
+                close(fd_ptc[WRITE]);
+                close(fd_ctp[READ]);
                 fprintf(stdout, "SHUTDOWN PARENT\n");
 
         }
