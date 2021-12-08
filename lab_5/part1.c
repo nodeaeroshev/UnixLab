@@ -11,9 +11,10 @@ struct msg_buf {
     char mtext[32];
 };
 
+
 int main()
 {
-    key_t keyq = ftok("progile_q", 42);
+    key_t keyq = ftok("/tmp/progfile_q", 42);
     int msgqid = msgget(keyq, IPC_CREAT | 0600);
     if (msgqid == -1)
     {
