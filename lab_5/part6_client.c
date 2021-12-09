@@ -16,10 +16,9 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        perror("Not provide queue");
+        perror("Not provide queue or client id");
         exit(1);
     }
-
     key_t keyq = ftok(argv[1], 42);
     key_t serverq = ftok("/var/tmp/server_q", 42);
 
@@ -30,21 +29,22 @@ int main(int argc, char *argv[])
         perror("Failed create or get queue");
         exit(1);
     }
-
     struct msg_buf request, response;
 
     request.mtype = msgqid;
-    sprintf(request.mtext, "Hello, world! From client %s\n", argv[1]);
-    msgsnd(msgqid, &request, sizeof(request.mtext), 0);
+    sprintf(request.mtext, "Hello, world from %s\n", argv[1]);
+    msgsnd(serverqid, &request, strlen(request.mtext) + 1, 0);
 
-    ssize_t mbytes = msgrcv(serverqid, &response, sizeof(response.mtext), msgqid, 0);
+    ssize_t mbytes = msgrcv(msgqid, &response, sizeof(response.mtext), 0, 0);
     if (mbytes == -1)
     {
         perror("Error occured while receive message");
         exit(1);
     }
 
-    fprintf(stdout, "Readed msg from server:\n%s", response.mtext);
+    fprintf(stdout, "Receive response\n%s", response.mtext);
+
+    msgctl(msgqid, IPC_RMID, 0);
 
     return 0;
 }

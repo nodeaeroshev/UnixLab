@@ -50,5 +50,6 @@ int main()
     fprintf(stdout, "Number of messages: %lu\n", ds.msg_qnum);
     fprintf(stdout, "Maximum number of bytes: %lu\n", ds.msg_qbytes);
 
+
     return 0;
 }
