@@ -29,8 +29,11 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    fprintf(stdout, "Msgqid -> %d\n", msgqid);
+    fprintf(stdout, "Msg type -> %ld\n", msg_type);
+
     struct msg_buf msg;
-    ssize_t mbytes = msgrcv(msgqid, &msg, sizeof(msg.mtext), msg_type, 0);
+    ssize_t mbytes = msgrcv(msgqid, &msg, sizeof(msg.mtext), msg_type, MSG_NOERROR);
     if (mbytes == -1)
    	{
    		perror("Erorr occured while receive message");

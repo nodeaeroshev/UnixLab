@@ -14,7 +14,7 @@ struct msg_buf {
 
 int main()
 {
-    key_t keyq = ftok("/tmp/progfile_q", 42);
+    key_t keyq = ftok("/var/tmp/progfile_q", 42);
     int msgqid = msgget(keyq, IPC_CREAT | 0600);
     if (msgqid == -1)
     {
@@ -26,21 +26,22 @@ int main()
 
     msg.mtype = 1;
     strcpy(msg.mtext, "Hello, world!");
-    msgsnd(msgqid, &msg, sizeof(msg), 0);
+    msgsnd(msgqid, &msg, sizeof(msg.mtext), 0);
     memset(msg.mtext, 0, sizeof(msg.mtext));
 
     msg.mtype = 2;
     strcpy(msg.mtext, "Hello, Linux!");
-    msgsnd(msgqid, &msg, sizeof(msg), 0);
+    msgsnd(msgqid, &msg, sizeof(msg.mtext), 0);
     memset(msg.mtext, 0, sizeof(msg.mtext)); 
 
     msg.mtype = 3;
     strcpy(msg.mtext, "Hello, Python!");
-    msgsnd(msgqid, &msg, sizeof(msg), 0);
+    msgsnd(msgqid, &msg, sizeof(msg.mtext), 0);
     memset(msg.mtext, 0, sizeof(msg.mtext)); 
 
     struct msqid_ds ds;
     msgctl(msgqid,IPC_STAT,&ds);
+    fprintf(stdout, "ID queue: %d\n", msgqid);
     fprintf(stdout, "Owner's UID: %d\n", ds.msg_perm.uid);
     fprintf(stdout, "Owner's GID: %d\n", ds.msg_perm.gid);
     fprintf(stdout, "Message stime: %ld\n", ds.msg_stime);
