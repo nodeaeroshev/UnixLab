@@ -1,30 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <string.h>
 #include <errno.h>
 
+#define SERVER_QUEUE "/var/tmp/server_q"
 
-int serverqid = 0;
 
 struct msg_buf {
     long mtype;
     char mtext[64];
 };
 
-void msg_handler(int sig)
-{
-    msgctl(serverqid, IPC_RMID, 0);
-    exit(2);
-}
-
 
 int main()
 {
-    signal(SIGINT, msg_handler);
-    key_t serverq = ftok("/var/tmp/server_q", 42);
+    int status_cr = creat(SERVER_QUEUE, 0600);
+    if (status_cr == -1)
+    {
+        perror("Error while creating file");
+        exit(1);
+    }
+    key_t serverq = ftok(SERVER_QUEUE, 100);
 
     int serverqid = msgget(serverq, IPC_CREAT | 0600);
     if (serverqid == -1)
@@ -35,16 +36,14 @@ int main()
 
     struct msg_buf request, response;
     ssize_t mbytes;
+    int send_status;
 
     strcpy(response.mtext, "Hello from server!\n");
     while(1)
     {
-        mbytes = msgrcv(serverqid, &request, sizeof(request.mtext), 0, MSG_NOERROR | IPC_NOWAIT);
+        mbytes = msgrcv(serverqid, &request, sizeof(request.mtext), 0, 0);
         if (mbytes == -1)
         {
-            if (errno == ENOMSG)
-                continue;
-
             perror("Error occured while receive message");
             exit(1);
         }
@@ -53,7 +52,12 @@ int main()
 
         fprintf(stdout, "Receive msg\n%s", request.mtext);
 
-        msgsnd(request.mtype, &response, strlen(response.mtext) + 1, 0);
+        send_status = msgsnd(request.mtype, &response, strlen(response.mtext) + 1, 0);
+        if (send_status == -1)
+        {
+            perror("Error occured while delivery message");
+            exit(1);
+        }
 
         memset(request.mtext, 0, sizeof(request.mtext));
     }
