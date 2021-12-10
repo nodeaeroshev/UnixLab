@@ -19,9 +19,9 @@ struct msg_buf {
 
 int main(int argc, char *argv[])
 {
-    if (argc < 2)
+    if (argc < 3)
     {
-        perror("Not provide queue");
+        perror("Not provide queue or client id");
         exit(1);
     }
     int status_cr = creat(argv[1], 0600);
@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
         perror("Error while creating file");
         exit(1);
     }
+    int msg_type = strtol(argv[2], NULL, 10);
 
     key_t keyq = ftok(argv[1], 42);
     key_t serverq = ftok(SERVER_QUEUE, 100);
@@ -45,7 +46,7 @@ int main(int argc, char *argv[])
     }
     struct msg_buf request, response;
 
-    request.mtype = msgqid;
+    request.mtype = msg_type;
     sprintf(request.mtext, "Hello, world from %s\n", argv[1]);
     int send_status = msgsnd(serverqid, &request, strlen(request.mtext) + 1, 0);
     if (send_status == -1)
@@ -54,7 +55,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    ssize_t mbytes = msgrcv(msgqid, &response, sizeof(response.mtext), 0, 0);
+    ssize_t mbytes = msgrcv(msgqid, &response, sizeof(response.mtext), msg_type, 0);
     if (mbytes == -1)
     {
         perror("Error occured while receive message");

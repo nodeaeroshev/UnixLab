@@ -9,15 +9,18 @@
 #include <errno.h>
 #include <unistd.h>
 
-#define SERVER_QUEUE "/var/tmp/server_q"
+#define REQUEST_QUEUE "/var/tmp/request_q"
+#define RESPONSE_QUEUE "/var/tmp/response_q"
 
-int serverqid = 0;
+int requestqid = 0, responseqid = 0;
 
 
 void msg_handler(int sig)
 {
-    msgctl(serverqid, IPC_RMID, 0);
-    unlink(SERVER_QUEUE);
+    msgctl(requestqid, IPC_RMID, 0);
+    msgctl(responseqid, IPC_RMID, 0);
+    unlink(REQUEST_QUEUE);
+    unlink(RESPONSE_QUEUE);
     exit(0);
 }
 
@@ -30,16 +33,25 @@ struct msg_buf {
 
 int main()
 {
-    int status_cr = creat(SERVER_QUEUE, 0600);
+    int status_cr = creat(REQUEST_QUEUE, 0600);
     if (status_cr == -1)
     {
         perror("Error while creating file");
         exit(1);
     }
-    key_t serverq = ftok(SERVER_QUEUE, 100);
+    status_cr = creat(RESPONSE_QUEUE, 0600);
+    if (status_cr == -1)
+    {
+        perror("Error while creating file");
+        exit(1);
+    }
 
-    serverqid = msgget(serverq, IPC_CREAT | 0600);
-    if (serverqid == -1)
+    key_t requestq = ftok(REQUEST_QUEUE, 1);
+    key_t responseq = ftok(RESPONSE_QUEUE, 1);
+
+    requestqid = msgget(requestq, IPC_CREAT | 0600);
+    responseqid = msgget(responseq, IPC_CREAT | 0600);
+    if (requestqid == -1 || responseqid == -1)
     {
         perror("Failed create or get queue");
         exit(1);
@@ -52,7 +64,7 @@ int main()
     strcpy(response.mtext, "Hello from server!\n");
     while(1)
     {
-        mbytes = msgrcv(serverqid, &request, sizeof(request.mtext), 0, 0);
+        mbytes = msgrcv(requestqid, &request, sizeof(request.mtext), 0, 0);
         if (mbytes == -1)
         {
             perror("Error occured while receive message");
@@ -63,7 +75,8 @@ int main()
 
         fprintf(stdout, "Receive msg\n%s", request.mtext);
 
-        send_status = msgsnd(request.mtype, &response, strlen(response.mtext) + 1, 0);
+        response.mtype = request.mtype;
+        send_status = msgsnd(responseqid, &response, strlen(response.mtext) + 1, 0);
         if (send_status == -1)
         {
             perror("Error occured while delivery message");
